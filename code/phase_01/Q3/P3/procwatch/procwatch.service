@@ -1,0 +1,15 @@
+[Unit]
+Description=Procwatch System Monitor Service
+After=network.target
+
+[Service]
+Type=simple
+
+ExecStart=/home/reza/CHW3/Q3/P3/procwatch/procwatch background /home/reza/CHW3/Q3/P3/procwatch/config.txt
+
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

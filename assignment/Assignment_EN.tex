@@ -1,0 +1,78 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=22mm,headheight=16pt]{geometry}
+\usepackage{amsmath,amssymb,graphicx,array,longtable,booktabs}
+\usepackage{microtype,xcolor,hyperref,xurl,fancyhdr}
+\definecolor{Navy}{HTML}{17324D}
+\definecolor{Teal}{HTML}{087F8C}
+\definecolor{Gold}{HTML}{B88128}
+\hypersetup{colorlinks=true,linkcolor=Navy,urlcolor=Teal,bookmarksnumbered=true,hypertexnames=false}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\setlength{\emergencystretch}{4em}
+\setcounter{tocdepth}{1}
+\pagestyle{fancy}\fancyhf{}
+\fancyfoot[R]{\small\thepage}
+\fancyfoot[L]{\small\sffamily Sharif University of Technology}
+\renewcommand{\headrulewidth}{0.3pt}
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}{-3.2ex plus -1ex minus -.2ex}{1.6ex plus .2ex}{\normalfont\Large\sffamily\bfseries\color{Navy}}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}{-2.5ex plus -1ex minus -.2ex}{1.2ex plus .2ex}{\normalfont\large\sffamily\bfseries\color{Teal}}}
+\makeatother
+\fancyhead[L]{\small\sffamily\color{Navy}Sharif University of Technology}\fancyhead[R]{\small\sffamily\color{Teal}Project Assignment}\begin{document}
+\begin{titlepage}\centering\vspace*{7mm}
+\includegraphics[width=31mm]{assets/sharif_emblem_en.png}\par\vspace{5mm}
+{\Large\sffamily\bfseries\color{Navy}SHARIF UNIVERSITY OF TECHNOLOGY\par}
+\vspace{2mm}{\sffamily Department of Electrical Engineering\par}
+\vspace{17mm}{\color{Teal}\rule{\linewidth}{1.4pt}}\par\vspace{6mm}
+{\large\sffamily\color{Teal}PROJECT ASSIGNMENT\par}
+\vspace{8mm}{\huge\sffamily\bfseries\color{Navy}Linux Process Telemetry and Unix-Domain IPC Services\par}
+\vspace{9mm}{\color{Gold}\rule{45mm}{1pt}}\par\vfill
+\begin{minipage}{.88\linewidth}
+{\sffamily\color{Teal}INSTRUCTOR / INSTRUCTORS}\par
+Dr Iman Gholampour\par\vspace{7mm}
+{\sffamily\color{Teal}ACADEMIC CONTEXT}\par
+Embedded Systems\par\end{minipage}\vfill
+\end{titlepage}
+\tableofcontents\clearpage
+\section{Theory questions}
+
+\begin{enumerate}
+
+\item Explain the roles of bootloader, Linux kernel, root filesystem, C library, init/\allowbreak{}systemd, and user applications. Describe how startup progresses between these components.
+
+\item Explain why a binary built with the laptop's native g+\allowbreak{}+\allowbreak{} on x86 cannot normally execute on an ARM board. Define native/\allowbreak{}cross compilation, host, and target. Identify toolchain components and their role in producing a target executable. Explain the importance of Make and CMake as a project grows.
+
+\item Explain /\allowbreak{}bin, /\allowbreak{}etc, /\allowbreak{}lib, /\allowbreak{}dev, /\allowbreak{}proc, /\allowbreak{}sys, and /\allowbreak{}var. Distinguish virtual proc/\allowbreak{}sys interfaces from ordinary stored files. Compare ext4, SquashFS, and tmpfs for embedded use, including power-loss behavior and flash-write wear.
+
+\item Explain why Device Tree describes hardware and what information it contains. Define Device Tree overlays and give a specific example of enabling a peripheral without rebuilding kernel code.
+
+\item Explain standard Linux latency/\allowbreak{}jitter sources and difficulties in hard real-time guarantees. Compare PREEMPT\_\allowbreak{}RT with separating time-critical work onto a microcontroller/\allowbreak{}RTOS while Linux handles less strict functions. Give advantages, limits, tradeoffs, and appropriate use cases.
+
+\end{enumerate}
+\section{Practical exercise 1: local request/response service}
+
+Write a Linux C+\allowbreak{}+\allowbreak{} server and client communicating through a pathname Unix-domain socket. The server creates, binds, and listens at a selected path, accepts clients, responds, and remains available for successive connections. Define a simple text protocol with one command returning the server's current date/\allowbreak{}time and one echoing client-supplied text. The client takes command and arguments from the terminal, connects, sends a request, receives and prints the response, then exits. Supply a Makefile building both applications. Submit source and Makefile and include screenshots of the server and client in separate terminals exercising both commands.
+
+\section{Practical exercise 2: procwatch system monitor}
+
+Implement procwatch in C+\allowbreak{}+\allowbreak{} using Linux /\allowbreak{}proc. Organize src and include directories and provide both Makefile and CMakeLists.txt. Select interactive or background mode with the first command-line argument. Interactive mode displays live system and process information;\allowbreak{} background mode remains in the foreground under systemd and writes periodic output to the journal.
+
+
+\subsection{System information}
+
+Display kernel version, logical CPU count, aggregate CPU utilization, memory total/\allowbreak{}used/\allowbreak{}free/\allowbreak{}available, and load average in a readable periodically refreshed table, for example every two seconds. Calculate CPU use from differences between consecutive /\allowbreak{}proc/\allowbreak{}stat samples. Explain the counters, their meanings, and why one cumulative sample cannot measure interval utilization. Generate one-core load with stress-ng or a busy loop and compare with top/\allowbreak{}htop.
+
+
+\subsection{Top-N processes}
+
+Enumerate numeric /\allowbreak{}proc directories. Obtain PID and process name. Measure CPU activity from the difference of utime+\allowbreak{}stime in successive /\allowbreak{}proc/\allowbreak{}[pid]/\allowbreak{}stat samples. Conversion to percentage is optional, but explain its denominator. Display RSS in specified units, sort by CPU activity, and show the highest N entries, default N=\allowbreak{}5. Each row includes PID, name, activity, and RSS. Handle common races such as a process exiting between enumeration and reading without crashing.
+
+
+\subsection{systemd operation}
+
+In background mode, read at least interval and N from a configuration file supplied by argument. Record top-N data every interval seconds. Handle SIGTERM as an orderly stop, log completion, and exit with code zero. Provide a deliberate error configuration that exits nonzero to test restart. Supply procwatch.service, enable startup at boot, and restart only on failure after approximately five seconds. Submit source, headers, both build descriptions, service, sample configuration, and a short README. The report must preserve build screenshots for Make and CMake, interactive output and CPU-load comparison, systemctl status, journalctl output, graceful SIGTERM termination, and restart following the intentional fault.
+
+\end{document}
